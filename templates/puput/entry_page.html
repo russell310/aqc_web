@@ -1,0 +1,130 @@
+{% extends "puput/base.html" %}
+{% load i18n static wagtailroutablepage_tags wagtailcore_tags wagtailimages_tags puput_tags social_share %}
+
+{% block title %}
+    {{ blog_page.title }} | {{ self.title }}
+{% endblock title %}
+
+{% block meta_title %}
+    {% if self.seo_title %}
+        {{ self.seo_title }}
+    {% else %}
+        {{ self.title }}
+    {% endif %}
+{% endblock meta_title %}
+
+{% block meta_description %}
+    {% if self.search_description %}
+        {{ self.search_description }}
+    {% else %}
+        {{ self.body|striptags|truncatewords:20 }}
+    {% endif %}
+{% endblock meta_description %}
+
+{% block canonical %}
+    {% canonical_url entry=self %}
+{% endblock canonical %}
+
+{% block social_share %}
+    {% image self.header_image fill-800x450 as share_image %}
+    <meta property="og:title" content="{{ self.title }}" />
+    <meta property="og:description" content="{% if self.excerpt %}{{ self.excerpt|striptags }}{% else %}{{ self.body|striptags|truncatewords:20 }}{% endif %}" />
+    <meta property="og:url" content="{% canonical_url entry=self %}" />
+    {% if self.header_image %}
+        <meta property="og:image" content="{% image_url share_image.url %}" />
+        <meta property="og:image:width" content="800" />
+        <meta property="og:image:height" content="450" />
+        <meta name="twitter:image" content="{% image_url share_image.url %}" />
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ self.title }}" />
+    <meta name="twitter:description" content="{% if self.excerpt %}{{ self.excerpt|striptags }}{% else %}{{ self.body|striptags|truncatewords:20 }}{% endif %}" />
+{% endblock social_share %}
+
+{% block blog_header %}
+    <div class="page-area"
+    {% if self.header_image %}
+    {% image self.header_image fill-1280x800 as header_image %}
+    style="background-image: url({{ header_image.url }}); background-position: top center; background-repeat: no-repeat; background-size: cover;"
+    {% else %}
+    style="background-image: url({% static 'images/no_image.jpg' %}); background-position: top center; background-repeat: no-repeat; background-size: cover;"
+    {% endif %}
+    >
+        <div class="breadcumb-overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="breadcrumb entry-page-heading" {% if self.id %}data-entry-page-update-comments-url="{% url 'entry_page_update_comments' self.id %}{% endif %}">
+                        <div class="center-div">
+                            <div class="section-headline white-headline">
+                                <h1 class="text-white">{{ self.title }}</h1>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="short-list">
+                                <span>
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                    {{ self.date|date:"DATE_FORMAT" }}
+                                </span>
+                                <span class="post-category-tag">
+                                        <ul class="links">
+                                        {% if self.categories.count > 0 %}
+                                            <span>
+                                                <i class="fa fa-folder-open"></i>
+                                                {% categories_list self.categories %}
+                                            </span>
+                                        {% endif %}
+                                        {% if self.tags.count > 0 %}
+                                            <span>
+                                                <i class="fa fa-tag"></i>
+                                                {% tags_list blog_page.num_tags_entry_header self.tags %}
+                                            </span>
+                                        {% endif %}
+                                    </ul>
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+{% block content %}
+    <div class="col-sm-10 col-sm-offset-1 single-post-content">
+        {{ self.body|richtext}}
+    </div>
+    <div class="clear"></div>
+
+    <div class="row">
+            <div class="col-xs-12 text-center">
+                <div class="social-share-icons">
+                    <ul>
+                        <li class="social-item">
+                            {% post_to_facebook entry.url '<span><i class="fa fa-facebook"></i></span>' %}
+                            </li>
+                            <li class="social-item">
+                                {% post_to_twitter entry.title entry.url '<span><i class="fa fa-twitter"></i></span>' %}
+                            </li>
+                            <li class="social-item">
+                                {% post_to_linkendin entry.url '<span><i class="fa fa-linkedin"></i></span>' %}
+                            </li>
+                            <li class="social-item">
+                                {% post_to_gplus entry.url '<span><i class="fa fa-google-plus"></i></span>' %}
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="single-post-border"></div>
+        {% show_comments %}
+{% endblock content %}
+
+{% block extra_content %}
+    {% if self.has_related %}
+        {% include 'puput/related_entries.html' with entry=self %}
+    {% endif %}
+{% endblock extra_content %}

@@ -1,0 +1,236 @@
+{% load static i18n wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags wagtailuserbar puput_tags %}
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>
+        {% block title %}
+            {{ blog_page.title }}{% if blog_page.description %} | {{ blog_page.description }}{% endif %}
+        {% endblock title %}
+    </title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="title"
+          content="{% block meta_title %}
+                        {% if blog_page.seo_title %}
+                            {{ blog_page.seo_title }}
+                        {% else %}
+                            {{ blog_page.title }}
+                        {% endif %}
+                   {% endblock meta_title %}"/>
+    <meta name="description"
+          content="{% block meta_description %}
+                        {{ blog_page.search_description }}
+                   {% endblock meta_description %}"/>
+    {% block social_share %}{% endblock social_share %}
+    <link rel="canonical" href="{% block canonical %}{% canonical_url %}{% endblock canonical %}"/>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon"
+          href="http://rockstheme.com/self-design/consultant-preview/img/logo/favicon.ico">
+
+    <!-- all css here -->
+
+    <!-- bootstrap v3.3.6 css -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto+Condensed" rel="stylesheet">
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <!-- owl.carousel css -->
+        <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+        <link rel="stylesheet" href="{% static 'css/owl.transitions.css' %}">
+        <!-- meanmenu css -->
+        <link rel="stylesheet" href="{% static 'css/meanmenu.min.css' %}">
+        <!-- font-awesome css -->
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="{% static 'css/icon.css' %}">
+        <!-- magnific css -->
+        <link rel="stylesheet" href="{% static 'css/magnific.min.css' %}">
+        <!-- venobox css -->
+        <link rel="stylesheet" href="{% static 'css/venobox.css' %}">
+        <!-- style css -->
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <!-- responsive css -->
+        <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    {% endblock %}
+    <!-- modernizr css -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+</head>
+
+<body>
+{% block menu %}
+    {% get_site_root as site_root %}
+    {% top_menu parent=site_root calling_page=self %}
+{% endblock %}
+<!--[if lt IE 8]>
+			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+
+<div id="preloader"></div>
+
+<!-- Start Bottom Header -->
+{% block blog_header %}{% endblock %}
+<!-- END Header -->
+<!--Blog Area Start-->
+{% wagtailuserbar %}
+<div class="blog-page area-padding">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="blog-grid">
+
+                <!-- Start single blog -->
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <div class="row">
+                        {% block content %}{% endblock %}
+                        <!-- End single blog -->
+                        {% block extra_content %}{% endblock %}
+                    </div>
+                    <!-- End row -->
+                </div>
+                <!-- End main column -->
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    <div class="left-head-blog">
+                        <div class="left-blog-page">
+                            <h4>Search</h4>
+                            <!-- search option start -->
+                            <div class="divider"></div>
+                            <form name="search_form" class="search_form" method="get"
+                                  action="{% routablepageurl blog_page 'entries_search' %}">
+                                <div class="blog-search-option">
+                                    <input type="search" name="q" placeholder="{% trans 'Search' %}">
+                                    <button class="button" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                            <!-- search option end -->
+                        </div>
+                        {% if blog_page.display_last_entries %}
+                            <div class="left-blog-page">
+                                <!-- recent start -->
+
+                                <div class="left-blog">
+                                    <h4>{% trans 'Last Entries' %}</h4>
+                                    <div class="divider"></div>
+                                    <div class="recent-post">
+                                        <!-- start single post -->
+                                        <div class="recent-single-post">
+                                            {% recent_entries blog_page.num_last_entries %}
+                                        </div>
+                                        <!-- End single post -->
+                                    </div>
+                                </div>
+                                <!-- recent end -->
+                            </div>
+                        {% endif %}
+                        {% if blog_page.display_popular_entries %}
+                            <div class="left-blog-page">
+                                <!-- recent start -->
+
+                                <div class="left-blog">
+                                    <h4>{% trans 'Popular Entries' %}</h4>
+                                    <div class="divider"></div>
+                                    <div class="recent-post">
+                                        <!-- start single post -->
+                                        <div class="recent-single-post">
+                                            {% popular_entries blog_page.num_popular_entries %}
+                                        </div>
+                                        <!-- End single post -->
+                                    </div>
+                                </div>
+                                <!-- recent end -->
+                            </div>
+                        {% endif %}
+                        {% if blog_page.display_categories %}
+                            <div class="left-blog-page">
+                                <div class="left-blog">
+                                    <h4>{% trans 'Categories' %}</h4>
+                                    <div class="divider"></div>
+                                    {% categories_list %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if blog_page.display_archive %}
+                            <!-- Need to work -->
+                            <div class="left-blog-page">
+                                <div class="left-blog">
+                                    <h4>{% trans 'Archive' %}</h4>
+                                    <div class="divider"></div>
+
+                                    {% archives_list %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if blog_page.display_tags %}
+                            <div class="left-blog-page">
+                                <div class="left-tags blog-tags">
+                                    <div class="popular-tag left-side-tags left-blog">
+                                        <h4>{% trans 'Tags' %}</h4>
+                                        <div class="divider"></div>
+                                        {% tags_list %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- End left sidebar -->
+            </div>
+        </div>
+        <!-- End row -->
+    </div>
+</div>
+<!-- Start Footer bottom Area -->
+<footer>
+    <div class="footer-area-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <div class="copyright">
+                        <p>
+                            Copyright © 2018
+                            <a href="#">Russell</a> All Rights Reserved
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- END Modal -->
+
+
+<!-- all js here -->
+
+<!-- jquery latest version -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<!-- bootstrap js -->
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<!-- owl.carousel js -->
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<!-- Counter js -->
+<script src="{% static 'js/jquery.counterup.min.js' %}"></script>
+<!-- waypoint js -->
+<script src="{% static 'js/waypoints.js' %}"></script>
+<!-- isotope js -->
+<script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
+<!-- stellar js -->
+<script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+<!-- magnific js -->
+<script src="{% static 'js/magnific.min.js' %}"></script>
+<!-- venobox js -->
+<script src="{% static 'js/venobox.min.js' %}"></script>
+<!-- meanmenu js -->
+<script src="{% static 'js/jquery.meanmenu.js' %}"></script>
+<!-- Form validator js -->
+<script src="{% static 'js/form-validator.min.js' %}"></script>
+<!-- plugins js -->
+<script src="{% static 'js/plugins.js' %}"></script>
+<!-- main js -->
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

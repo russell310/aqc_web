@@ -1,0 +1,189 @@
+{% extends "puput/base.html" %}
+
+{% load static i18n wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags puput_tags social_share %}
+
+{% block title %}
+    {% if search_term %}
+        {{ search_term }} | {{ blog_page.title }}
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock title %}
+
+{% block meta_title %}
+    {% if search_term %}
+        {% trans 'Entries for' %} {{ search_type }} {{ search_term }}
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock meta_title %}
+
+{% block meta_description %}
+    {% if search_term %}
+        {% trans 'Entries for' %} {{ search_type }} {{ search_term }}
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock meta_description %}
+
+{% block social_share %}
+    {% image blog_page.header_image fill-800x450 as share_image %}
+    <meta property="og:title" content="{{ blog_page.title }}" />
+    <meta property="og:description" content="{{ blog_page.description }}" />
+    <meta property="og:url" content="{% canonical_url %}" />
+    {% if blog_page.header_image %}
+        <meta property="og:image" content="{% image_url share_image.url %}" />
+        <meta property="og:image:width" content="800" />
+        <meta property="og:image:height" content="450" />
+        <meta name="twitter:image" content="{% image_url share_image.url %}" />
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ blog_page.title }}" />
+    <meta name="twitter:description" content="{{ blog_page.description }}" />
+{% endblock social_share %}
+{% block blog_header %}
+    <div class="page-area"
+    {% if blog_page.header_image %}
+    {% image blog_page.header_image fill-1280x800 as header_image %}
+    style="background-image: url({{ header_image.url }}); background-position: top center; background-repeat: no-repeat; background-size: cover;"
+    {% else %}
+    style="background-image: url({% static 'images/no_image.jpg' %}); background-position: top center; background-repeat: no-repeat; background-size: cover;"
+    {% endif %}
+    >
+        <div class="breadcumb-overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="breadcrumb">
+                        <div class="center-div">
+                            <div class="section-headline white-headline">
+                                <h1 class="text-white">{{ blog_page.title }}</h1>
+                            </div>
+                            <div>
+                                <p class="text-white">{{ blog_page.description }}</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+{% block content %}
+    {% with per_page=blog_page.num_entries_page %}
+        {# 'paginate' tag cannot render dotted variables, so we need to create a context var #}
+        {% paginate per_page entries %}
+        {% if search_term %}
+            <div class="text-center searchTerm">{% trans 'Entries for' %} {{ search_type }} "{{ search_term }}" <i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
+            </div>
+        {% endif %}
+        {% for entry in entries %}
+        <div class="col-md-12 col-sm-12 col-xs-12 single-post">
+        <div class="row">
+            <div class="col-sm-2 col-xs-12">
+                <div class="row articleSideGutter">
+                    <div class="col-sm-12 col-xs-3">
+                       {# <img src="{% static 'images/icon-user-id.png' %}" alt=""> #} 
+                       {% if blog_page.display_comments %}
+                        <a href="{% entry_url entry blog_page %}#disqus_thread">
+                            <i class="fa fa-comments"></i>
+                            {{ entry.num_comments }}  
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-12 col-xs-9">
+{#                        <p> #}
+    {#                          <i class="fa fa-user-circle" aria-hidden="true"></i> by   #} 
+    {#                        <a href="{% routablepageurl blog_page 'entries_by_author' entry.owner.username %}"> {{ entry.owner.username }}</a>   #} 
+    {#                    </p>   #} 
+                        <p>{{ entry.date|date:"DATE_FORMAT" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-10 col-xs-12">
+                <div class="single-blog">
+                    <div class="blog-image">
+                            {% image entry.header_image fill-1280x640 as header_image %}
+                        <img src="{{ header_image.url }}" alt="{{ entry.header_image.title }}">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-title">
+                            <div class="post-category-tag">
+                                <ul class="links">
+                                {% if entry.categories.count > 0 %}
+                                    <span>
+                                        <i class="fa fa-folder-open"></i>
+                                        {% categories_list entry.categories %}
+                                    </span>
+                                {% endif %}
+                                {% if entry.tags.count > 0 %}
+                                    <span>
+                                        <i class="fa fa-tag"></i>
+                                        {% tags_list blog_page.num_tags_entry_header entry.tags %}
+                                    </span>
+                                {% endif %}
+                            </ul>
+                            </div>
+                            {% include 'puput/entry_page_header.html' %}
+                        </div>
+                        <div class="divider"></div>
+                        <div class="blog-text">
+                            <p>
+                                {% if entry.excerpt %}
+                                    {{ entry.excerpt|richtext }}
+                                {% else %}
+                                    {{ entry.body|richtext|truncatewords_html:70 }}
+                                {% endif %}
+                            </p>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="social-share-icons">
+                                    <ul>
+                                        <li class="social-item">
+                                            {% post_to_facebook entry.url '<span><i class="fa fa-facebook"></i></span>' %}
+                                            </li>
+                                            <li class="social-item">
+                                                {% post_to_twitter entry.title entry.url '<span><i class="fa fa-twitter"></i></span>' %}
+                                            </li>
+                                            <li class="social-item">
+                                                {% post_to_linkendin entry.url '<span><i class="fa fa-linkedin"></i></span>' %}
+                                            </li>
+                                            <li class="social-item">
+                                                {% post_to_gplus entry.url '<span><i class="fa fa-google-plus"></i></span>' %}
+                                        </li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="read_more">
+                                    <a href="{% entry_url entry blog_page %}">{% trans 'Continue reading' %}
+                                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% empty %}
+            <span>{% trans 'No results found.' %}</span>
+    {% endfor %}
+
+    <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="blog-pagination text-center">
+                <ul class="pagination">
+                    {% show_paginator %}
+                </ul>
+            </div>
+        </div>
+
+    {% endwith %}
+    {% endblock content %}

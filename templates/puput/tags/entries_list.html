@@ -1,0 +1,22 @@
+{% load i18n wagtailimages_tags puput_tags %}
+
+{% for entry in entries %}
+<div class="pst-content">
+        <p>
+            <span>{{ entry.date|date:"SHORT_DATE_FORMAT" }}</span>
+            {% if blog_page.display_comments %}
+            <span>
+                <a href="{% entry_url entry blog_page %}#disqus_thread">
+                    <i class="fa fa-comments"></i>
+                    {{ entry.num_comments }}  
+                </a>
+            </span>
+            {% endif %}
+        </p>
+        <p>
+            <a href="{% entry_url entry blog_page %}">{{ entry.title }}</a>
+        </p>
+    </div>
+    {% empty %}
+    {% trans 'No entries yet' %}
+{% endfor %}

@@ -1,0 +1,43 @@
+{% load i18n wagtailcore_tags wagtailimages_tags puput_tags %}
+
+<div class="relatedPosts col-md-10 col-md-offset-1">
+    <section class="box features related-header">
+        <h3 class="post_title text-center">
+            <span>{% trans 'Related Entries' %}</span>
+        </h3>
+        <div class="divider-center"></div>
+            <div class="row">
+                {% for related_entry in entry.related|slice:':3' %}
+                    <div class="col-md-4">
+                        <section class="related-content">
+                            <div class="image-related">
+                                {% image related_entry.header_image fill-800x400 as header_image %}
+                                <img alt="{{ related_entry.header_image.title }}" src="{{ header_image.url }}">
+                            </div>
+                            <a class="related-title" href="{% entry_url related_entry blog_page %}"><h5>{{ related_entry.title }}</h5></a>
+                            <p class="related-time-comment">
+                                    <span>{{ related_entry.date|date:"SHORT_DATE_FORMAT" }}</span>
+                                    {% if blog_page.display_comments %}
+                                    <span>
+                                        <a href="{% entry_url related_entry blog_page %}#disqus_thread">
+                                            <i class="fa fa-comments"></i>
+                                            {{ related_entry.num_comments }}  
+                                        </a>
+                                    </span>
+                                    {% endif %}
+                                </p>
+                            <p>
+                                {{ related_entry.body|richtext|truncatewords:15 }}
+                            </p>
+                            <div class="read_more">
+                                <a href="{% entry_url related_entry blog_page %}">{% trans 'Continue reading' %}
+                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </section>
+                        
+                    </div>
+                {% endfor %}
+            </div>
+    </section>
+</div>
