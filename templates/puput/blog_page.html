@@ -75,7 +75,7 @@
         {# 'paginate' tag cannot render dotted variables, so we need to create a context var #}
         {% paginate per_page entries %}
         {% if search_term %}
-            <div class="text-center searchTerm">{% trans 'Entries for' %} {{ search_type }} "{{ search_term }}" <i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
+            <div class="text-center searchTerm">{% trans 'আপনি খুঁজেছেন' %} {{ search_type }} "{{ search_term }}" <i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
             </div>
         {% endif %}
         {% for entry in entries %}
@@ -160,7 +160,7 @@
                             </div>
                             <div class="col-sm-6 col-xs-12">
                                 <div class="read_more">
-                                    <a href="{% entry_url entry blog_page %}">{% trans 'Continue reading' %}
+                                    <a href="{% entry_url entry blog_page %}">{% trans 'পড়ুন' %}
                                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                                     </a>
                                 </div>
@@ -174,7 +174,7 @@
 
     </div>
     {% empty %}
-            <span>{% trans 'No results found.' %}</span>
+            <span>{% trans 'কোন তথ্য পাওয়া যায়নি' %}</span>
     {% endfor %}
 
     <div class="col-md-12 col-sm-12 col-xs-12">

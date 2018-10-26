@@ -6,6 +6,6 @@
             <a href="{% routablepageurl blog_page "entries_by_category" category.slug %}">{{ category.name }}</a>
         </li>
     {% empty %}
-        {% trans 'No categories yet' %}
+        {% trans 'কোন তথ্য পাওয়া যায়নি' %}
     {% endfor %}
 </ul>

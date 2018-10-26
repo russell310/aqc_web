@@ -3,7 +3,7 @@
 <div class="relatedPosts col-md-10 col-md-offset-1">
     <section class="box features related-header">
         <h3 class="post_title text-center">
-            <span>{% trans 'Related Entries' %}</span>
+            <span>{% trans 'এই সম্পর্কিত অন্যান্য লেখা' %}</span>
         </h3>
         <div class="divider-center"></div>
             <div class="row">
@@ -30,7 +30,7 @@
                                 {{ related_entry.body|richtext|truncatewords:15 }}
                             </p>
                             <div class="read_more">
-                                <a href="{% entry_url related_entry blog_page %}">{% trans 'Continue reading' %}
+                                <a href="{% entry_url related_entry blog_page %}">{% trans 'পড়ুন' %}
                                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                                 </a>
                             </div>
