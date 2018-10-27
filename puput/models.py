@@ -223,8 +223,7 @@ def _add_owner_panel():
         return [FieldPanel('owner')]
     return []
 
-from unidecode import unidecode
-from django.template import defaultfilters
+
 class EntryPage(six.with_metaclass(PageBase, Entry, Page)):
     # Search
     search_fields = Page.search_fields + [
@@ -266,11 +265,6 @@ class EntryPage(six.with_metaclass(PageBase, Entry, Page)):
     class Meta:
         verbose_name = _('Entry')
         verbose_name_plural = _('Entries')
-
-    def full_clean(self, *args, **kwargs):
-        # first call the built-in cleanups (including default slug generation)
-        super(EntryPage, self).full_clean(*args, **kwargs)
-        self.slug = defaultfilters.slugify(unidecode(self.title))
 
 
 class SinglePages(Page):
