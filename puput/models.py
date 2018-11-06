@@ -268,6 +268,14 @@ class EntryPage(six.with_metaclass(PageBase, Entry, Page)):
 
 
 class SinglePages(Page):
+    header_image = models.ForeignKey(
+        get_image_model_path(),
+        verbose_name=_('Header image'),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
     body = StreamField([
         ('heading', blocks.CharBlock(classname="full title")),
         ('paragraph', blocks.RichTextBlock()),
@@ -278,6 +286,7 @@ class SinglePages(Page):
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
+        ImageChooserPanel('header_image'),
     ]
 
     @property
