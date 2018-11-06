@@ -285,8 +285,8 @@ class SinglePages(Page):
     ], null=True, blank=True)
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body'),
         ImageChooserPanel('header_image'),
+        StreamFieldPanel('body'),
     ]
 
     @property
