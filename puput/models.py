@@ -306,8 +306,17 @@ class FormField(AbstractFormField):
 class FormPage(AbstractEmailForm):
     intro = RichTextField(blank=True)
     thank_you_text = RichTextField(blank=True)
+    header_image = models.ForeignKey(
+        get_image_model_path(),
+        verbose_name=_('Header image'),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
 
     content_panels = AbstractEmailForm.content_panels + [
+        ImageChooserPanel('header_image'),
         FormSubmissionsPanel(),
         FieldPanel('intro', classname="full"),
         InlinePanel('form_fields', label="Form fields"),
